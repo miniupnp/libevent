@@ -108,6 +108,8 @@ struct evhttp_connection {
 	 * in that case we can't extract IP address even in close_cb.
 	 * So we need to save it, just after we connected to remote server. */
 	struct sockaddr_storage *conn_address;
+
+	const struct evhttp_extended_methods *ext_methods;
 };
 
 /* A callback for an http server */
@@ -174,6 +176,8 @@ struct evhttp {
 	void *bevcbarg;
 
 	struct event_base *base;
+
+	const struct evhttp_extended_methods *ext_methods;
 };
 
 /* XXX most of these functions could be static. */
