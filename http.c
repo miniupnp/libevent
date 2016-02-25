@@ -4203,6 +4203,7 @@ evhttp_get_request(struct evhttp *http, evutil_socket_t fd,
 	 * we need to know which http server it belongs to.
 	 */
 	evcon->http_server = http;
+	evcon->ext_method_cmp = http->ext_method_cmp;
 	TAILQ_INSERT_TAIL(&http->connections, evcon, next);
 
 	if (evhttp_associate_new_request_with_connection(evcon) == -1)
