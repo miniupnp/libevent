@@ -249,10 +249,18 @@ EVENT2_EXPORT_SYMBOL
 void evhttp_set_allowed_methods(struct evhttp* http, ev_uint16_t methods);
 
 /**
-  Sets the HTTP extended methods supported by this server
+  Sets the callback function which allows HTTP extended methods
+  to be supported by this server.
+
+  The callback should :
+   - if method field is NULL : set method field according to type field
+   - else : set type and flags fields according to method string
+   - return 0 for success (known method / type)
+   - return -1 for error (unknown method / type)
 
   @param http the http server on which to add support to the methods
-  @param ext_methods method list
+  @param cmp the extended method callback
+  @see evhttp_extended_method
 */
 EVENT2_EXPORT_SYMBOL
 void evhttp_set_extended_method_cmp(struct evhttp* http,
@@ -501,14 +509,16 @@ enum evhttp_cmd_type {
 #define EVHTTP_REQ_MAX EVHTTP_REQ_PATCH
 
 /** structure to allow users to define their own HTTP methods
- * @see evhttp_set_extended_methods */
+ * @see evhttp_set_extended_method_cmp
+ * @see evhttp_connection_set_extended_method_cmp */
 
 /**
- * @brief stucture that is passed (and modified) when the  
+ * @brief stucture that is passed to (and modified by) the
+ * extended method callback function
  */
 struct evhttp_extended_method {
-	char * method;
-	ev_uint16_t type;
+	const char * method;
+	ev_uint16_t type;	/* @see enum evhttp_cmd_type */
 	ev_uint16_t flags;	/* Available flag : EVHTTP_METHOD_HAS_BODY */
 };
 
@@ -649,7 +659,7 @@ void evhttp_request_free(struct evhttp_request *req);
  * @param dnsbase the dns_base to use for resolving host names; if not
  *     specified host name resolution will block.
  * @param address the address to which to connect
-  stucture that is passed (and modified) when the * @param port the port to connect to
+ * @param port the port to connect to
  * @return an evhttp_connection object that can be used for making requests
  */
 EVENT2_EXPORT_SYMBOL
@@ -689,9 +699,9 @@ EVENT2_EXPORT_SYMBOL
 int evhttp_request_is_owned(struct evhttp_request *req);
 
 /**
- * Sets extended method cmp callback 
+ * Sets extended method cmp callback for this http connection.
  *
- * @see evhttp_set_extended_method
+ * @see evhttp_set_extended_method_cmp
  */
 EVENT2_EXPORT_SYMBOL
 void evhttp_connection_set_extended_method_cmp(struct evhttp_connection *evcon,

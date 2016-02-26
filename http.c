@@ -343,8 +343,8 @@ evhttp_method_(struct evhttp_connection *evcon,
 		/* setup the structure to allow for the cmp.
 		 *
 		 * if the cmp function is set, it has the ability to
-		 * modify method, and flags. Other fields will be
-		 * ignoed.
+		 * modify method and flags. Other fields will be
+		 * ignored.
 		 *
 		 * NOTE: the flags returned are OR'd with the current
 		 *       flags.
@@ -1783,6 +1783,7 @@ evhttp_parse_request_line(struct evhttp_request *req, char *line)
 		struct evhttp_extended_method ext_method;
 
 		ext_method.method = method;
+		ext_method.type = EVHTTP_REQ_UNKNOWN_;
 
 		if (req->evcon->ext_method_cmp &&
 			    req->evcon->ext_method_cmp(&ext_method) == 0) {
