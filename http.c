@@ -2615,6 +2615,9 @@ evhttp_make_request(struct evhttp_connection *evcon,
     struct evhttp_request *req,
     enum evhttp_cmd_type type, const char *uri)
 {
+	if (evhttp_method(type) == NULL) {
+		return -1;	/* invalid method */
+	}
 	/* We are making a request */
 	req->kind = EVHTTP_REQUEST;
 	req->type = type;
